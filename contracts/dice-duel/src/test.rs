@@ -54,7 +54,7 @@ fn setup_test() -> (
     // Set ledger info for time-based operations
     env.ledger().set(soroban_sdk::testutils::LedgerInfo {
         timestamp: 1441065600,
-        protocol_version: 25,
+        protocol_version: 27,
         sequence_number: 100,
         network_id: Default::default(),
         base_reserve: 10,
