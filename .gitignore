@@ -39,3 +39,7 @@ frontend-template/*.tsbuildinfo
 # OS
 .DS_Store
 Thumbs.db
+
+# MCP server
+mcp/dist/
+mcp/node_modules/
