@@ -158,14 +158,24 @@ if (!isValidSlug(gameSlug)) {
 const scriptDir = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = path.resolve(scriptDir, '..');
 const contractsRoot = path.join(repoRoot, 'contracts');
-const exampleContractDir = path.join(contractsRoot, 'number-guess');
+// La plantilla, no un juego existente.
+//
+// Antes esto apuntaba a `number-guess`, asi que cada juego nuevo arrancaba con
+// una copia de sus 432 lineas y habia que borrar lo que no aplicaba. Eso es lo
+// que produjo cuatro taxonomias distintas de codigos de error en tres
+// contratos: cada uno los renumero por su cuenta al editar la copia.
+//
+// `_template` trae la interfaz del hub, los errores comunes y el compromiso y
+// revelacion desde `game-hub-core`, y deja una sola funcion para escribir:
+// `decidir_ganador`.
+const exampleContractDir = path.join(contractsRoot, '_template');
 const newContractDir = path.join(contractsRoot, gameSlug);
 const frontendTemplateDir = path.join(repoRoot, 'template_frontend');
 const frontendSlug = `${gameSlug}-frontend`;
 const newFrontendDir = path.join(repoRoot, frontendSlug);
 
 if (!existsSync(exampleContractDir)) {
-  console.error(`\n❌ Missing number-guess example contract at ${exampleContractDir}`);
+  console.error(`\n❌ Missing contract template at ${exampleContractDir}`);
   process.exit(1);
 }
 
@@ -194,7 +204,7 @@ if (existsSync(newFrontendDir)) {
 
 console.log(`\n🧩 Creating game: ${gameSlug}`);
 
-console.log('  • Copying number-guess contract...');
+console.log('  • Copying contract template...');
 copyDir(exampleContractDir, newContractDir);
 
 const pascalName = pascalFromSlug(gameSlug);
@@ -202,12 +212,23 @@ const titleName = titleCaseFromSlug(gameSlug);
 const camelName = camelFromSlug(gameSlug);
 const envKey = toEnvKey(gameSlug);
 
+// La plantilla usa marcadores explicitos en vez de los nombres de un juego
+// real. Con nombres reales, un reemplazo de texto tocaba cualquier aparicion
+// de "number-guess" en comentarios y strings; con marcadores solo toca lo que
+// esta puesto para ser reemplazado.
 const replacements = {
-  'number-guess': gameSlug,
-  'NumberGuess': pascalName || 'Game',
-  'Number Guess': titleName || 'Game',
-  'numberGuess': camelName || 'game',
-  'NUMBER_GUESS': envKey || 'GAME',
+  // symbol_short! solo acepta [a-zA-Z0-9_] y como maximo 9 caracteres, asi que
+  // el slug no sirve tal cual: "coin-flip" no compila por el guion, y uno largo
+  // no entra. Este simbolo identifica al juego dentro de los compromisos, asi
+  // que solo tiene que ser estable y distinto del de los demas.
+  '__SLUG__': gameSlug.replace(/-/g, '_').slice(0, 9),
+  '__GAME_STRUCT__': pascalName || 'Game',
+  '__GAME_NAME__': titleName || 'Game',
+  '__GAME_CAMEL__': camelName || 'game',
+  '__GAME_ENV__': envKey || 'GAME',
+  // Y los del nombre del crate, que vienen del Cargo.toml de la plantilla.
+  'game-template': gameSlug,
+  'GameTemplate': pascalName || 'Game',
 };
 replaceInDir(newContractDir, replacements);
 
