@@ -155,12 +155,13 @@ const walletSecrets: Record<string, string> = {};
 
 // Load existing secrets from .env if available
 let existingSecrets: Record<string, string | null> = {
+  admin: null,
   player1: null,
   player2: null,
 };
 
 const existingEnv = await readEnvFile('.env');
-for (const identity of ['player1', 'player2']) {
+for (const identity of ['admin', 'player1', 'player2']) {
   const key = `VITE_DEV_${identity.toUpperCase()}_SECRET`;
   const v = getEnvValue(existingEnv, key);
   if (v && v !== 'NOT_AVAILABLE') existingSecrets[identity] = v;
@@ -193,10 +194,22 @@ for (const contract of allContracts) {
 
 // Handle admin identity (needs to be in Stellar CLI for deployment)
 console.log('Setting up admin identity...');
-console.log('📝 Generating new admin identity...');
-const adminKeypair = Keypair.random();
+
+// El admin se reusa igual que player1 y player2. Antes se generaba uno nuevo
+// en cada corrida y su secreto solo vivia en memoria, asi que al terminar el
+// proceso los contratos quedaban con un administrador que ya no controlaba
+// nadie: no habia forma de volver a llamar a nada que pidiera auth de admin.
+let adminKeypair: Keypair;
+if (existingSecrets.admin) {
+  console.log('✅ Using existing admin from .env');
+  adminKeypair = Keypair.fromSecret(existingSecrets.admin);
+} else {
+  console.log('📝 Generating new admin identity...');
+  adminKeypair = Keypair.random();
+}
 
 walletAddresses.admin = adminKeypair.publicKey();
+walletSecrets.admin = adminKeypair.secret();
 
 try {
   await ensureTestnetFunded(walletAddresses.admin);
@@ -367,6 +380,9 @@ VITE_DEV_PLAYER1_ADDRESS=${walletAddresses.player1}
 VITE_DEV_PLAYER2_ADDRESS=${walletAddresses.player2}
 
 # Dev wallet secret keys (WARNING: Never commit this file!)
+# El del admin es el que controla los contratos desplegados: si se pierde,
+# se pierde el control y hay que volver a desplegar todo.
+VITE_DEV_ADMIN_SECRET=${walletSecrets.admin}
 VITE_DEV_PLAYER1_SECRET=${walletSecrets.player1}
 VITE_DEV_PLAYER2_SECRET=${walletSecrets.player2}
 `;
