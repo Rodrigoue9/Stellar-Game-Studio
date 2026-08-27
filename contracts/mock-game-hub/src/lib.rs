@@ -7,6 +7,27 @@ use soroban_sdk::{contract, contractevent, contractimpl, Address, Env};
 /// This contract provides the same external interface that games expect
 /// (start_game, end_game) but does nothing internally. It exists purely
 /// for game contracts to compile and integrate during development.
+///
+/// # No lockea puntos, y eso importa mas de lo que parece
+///
+/// Los tres juegos del repositorio compilan y pasan sus tests contra este
+/// contrato. Como `start_game` y `end_game` aceptan cualquier cosa y no
+/// mueven nada, **una suite entera en verde no dice nada sobre si el juego
+/// maneja bien los puntos**.
+///
+/// Lo que un juego puede estar haciendo mal sin que un solo test falle:
+///
+/// - Llamar a `start_game` con apuestas que el jugador no tiene.
+/// - Llamar a `end_game` dos veces para la misma sesion.
+/// - No llamar a `end_game` nunca, dejando los puntos bloqueados para siempre.
+/// - Declarar ganador a alguien que no participo.
+///
+/// El hub real rechaza todo eso. Este no rechaza nada.
+///
+/// Asi que un contrato con los tests en verde contra este mock **todavia no
+/// esta probado**: falta ejercitarlo contra el hub de produccion, o contra un
+/// mock que si valide. Tenerlo presente antes de desplegar algo que mueva
+/// puntos de verdad.
 #[contract]
 pub struct MockGameHub;
 
