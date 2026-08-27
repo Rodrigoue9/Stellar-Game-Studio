@@ -26,6 +26,9 @@
 //! }
 //! ```
 
+pub mod commit_reveal;
+mod test;
+
 use soroban_sdk::{Address, Env, contractclient, contracterror};
 
 // ============================================================================
