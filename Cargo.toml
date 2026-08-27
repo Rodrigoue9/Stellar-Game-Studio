@@ -2,6 +2,7 @@
 resolver = "2"
 version = "0.1.2"
 members = [
+  "contracts/game-hub-core",
   "contracts/mock-game-hub",
   "contracts/twenty-one",
   "contracts/number-guess",

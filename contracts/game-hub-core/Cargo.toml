@@ -1,0 +1,16 @@
+[package]
+name = "game-hub-core"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[lib]
+# rlib nada mas: esto no se despliega, lo consumen los contratos.
+crate-type = ["rlib"]
+doctest = false
+
+[dependencies]
+soroban-sdk = { workspace = true }
+
+[dev-dependencies]
+soroban-sdk = { workspace = true, features = ["testutils"] }
