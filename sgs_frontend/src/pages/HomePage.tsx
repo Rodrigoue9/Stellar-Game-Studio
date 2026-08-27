@@ -136,6 +136,18 @@ export function HomePage({ onNavigate }: HomePageProps) {
               </p>
               <div className="ai-ready-footer">Reduces missed steps during assisted builds.</div>
             </div>
+            <div className="ai-ready-card">
+              <div className="ai-ready-card-header">
+                <span className="ai-ready-chip">MCP</span>
+                <h4>Model Context Protocol</h4>
+              </div>
+              <p>
+                An MCP server that lets an assistant scaffold, build, test, deploy and publish a game
+                through the studio&apos;s own scripts &mdash; the same commands you would run by hand,
+                exposed as tools.
+              </p>
+              <div className="ai-ready-footer">Secrets are redacted before anything is returned.</div>
+            </div>
             <div className="ai-ready-card ai-ready-benefits">
               <h4>Why it helps game devs</h4>
               <p>
@@ -148,6 +160,50 @@ export function HomePage({ onNavigate }: HomePageProps) {
                 <span>Confidence</span>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="contract-core" className="commands-section">
+        <div className="section-header">
+          <h3>Shared Contract Core</h3>
+          <p>A new game starts from a template, not from a copy of an existing one.</p>
+        </div>
+        <div className="commands-grid">
+          <div className="command-card">
+            <h4>game-hub-core</h4>
+            <p>
+              The Game Hub interface, the error codes every two-player game needs, and commit-reveal
+              randomness, in one crate. Games declare their own errors from 20 up, so a client can read
+              the low codes without knowing which game it is talking to.
+            </p>
+            <code>game-hub-core = &#123; path = &quot;../game-hub-core&quot; &#125;</code>
+          </div>
+          <div className="command-card">
+            <h4>Dice nobody can call early</h4>
+            <p>
+              Both players commit to a secret before either one stakes anything. The seed comes from
+              combining the two, so neither side can work out the result alone &mdash; and the order
+              they reveal in does not change it.
+            </p>
+            <code>commitment() &rarr; reveal() &rarr; seed()</code>
+          </div>
+          <div className="command-card">
+            <h4>One function to write</h4>
+            <p>
+              The template already handles the four phases, the reveal deadline, hash validation and
+              the no-show path. What is left is the rule of your game: given the seed, who wins.
+            </p>
+            <code>fn decidir_ganador(env, seed) -&gt; bool</code>
+          </div>
+          <div className="command-card">
+            <h4>Nobody reveals, nobody wins</h4>
+            <p>
+              If one player never reveals, the other collects once the deadline passes &mdash; walking
+              away has to cost something. If neither reveals there is no winner, because declaring one
+              would mean choosing the outcome.
+            </p>
+            <code>cobrar_incomparecencia()</code>
           </div>
         </div>
       </section>
