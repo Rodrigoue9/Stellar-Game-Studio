@@ -1,4 +1,9 @@
 #![no_std]
+// El nombre del contrato es un marcador que `bun run create` reemplaza, asi que
+// hasta entonces no cumple la convencion de mayusculas. Sin esto el workspace
+// entero arrastra un warning permanente, y cualquier gate de `-D warnings`
+// (como el que usa el CI de los juegos) falla por culpa de la plantilla.
+#![allow(non_camel_case_types)]
 
 //! # __GAME_NAME__
 //!
