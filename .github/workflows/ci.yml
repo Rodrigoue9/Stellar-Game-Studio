@@ -1,0 +1,85 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  contracts:
+    name: Soroban Contracts
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: stable
+          targets: wasm32v1-none
+          components: rustfmt, clippy
+
+      - name: Cache Cargo dependencies & target
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-
+
+      - name: Check code formatting
+        run: cargo fmt --all -- --check
+
+      - name: Run Clippy linter
+        run: cargo clippy --workspace --all-targets -- -D warnings
+
+      - name: Run contract unit tests
+        run: cargo test --workspace
+
+      - name: Build contracts for wasm32v1-none
+        run: cargo build --workspace --target wasm32v1-none --release
+
+      - name: Verify generated WASM artifacts
+        run: |
+          ls -la target/wasm32v1-none/release/*.wasm
+          echo "WASM artifacts verified successfully."
+
+  frontend:
+    name: Frontend Applications
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Bun runtime
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install root dependencies
+        run: bun install
+
+      - name: Build sgs_frontend
+        run: |
+          cd sgs_frontend
+          bun install
+          bun run build
+
+      - name: Build template_frontend
+        run: |
+          cd template_frontend
+          bun install
+          bun run build
