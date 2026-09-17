@@ -46,6 +46,11 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-cargo-
 
+      - name: Format Rust code
+        run: |
+          cargo fmt --all
+          git status --short
+
       - name: Check code formatting
         run: cargo fmt --all -- --check
 
