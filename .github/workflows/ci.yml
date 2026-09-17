@@ -16,6 +16,9 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: write
+
 jobs:
   contracts:
     name: Soroban Contracts
@@ -49,7 +52,9 @@ jobs:
       - name: Format Rust code
         run: |
           cargo fmt --all
-          git status --short
+          git config user.name "Rodrigoue9"
+          git config user.email "devhq.oficial@gmail.com"
+          git diff --quiet || (git commit -am "style: format contracts with cargo fmt" && git push)
 
       - name: Check code formatting
         run: cargo fmt --all -- --check
