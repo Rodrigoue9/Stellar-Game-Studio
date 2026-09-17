@@ -106,6 +106,7 @@ pub fn commitment(
 ///
 /// Devuelve `false` si no coincide. El contrato que llama decide si eso es un
 /// error o una incomparecencia; aca no se decide por el.
+#[allow(clippy::too_many_arguments)]
 pub fn verifies(
     env: &Env,
     expected: &BytesN<32>,

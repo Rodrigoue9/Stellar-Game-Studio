@@ -320,7 +320,7 @@ impl TwentyOneContract {
             game.player2_hand.len()
         };
 
-        seed_bytes.append(&Bytes::from_array(&env, &(card_count as u32).to_be_bytes()));
+        seed_bytes.append(&Bytes::from_array(&env, &card_count.to_be_bytes()));
         seed_bytes.append(&Bytes::from_array(&env, &game.round.to_be_bytes()));
 
         let card_seed = env.crypto().keccak256(&seed_bytes);

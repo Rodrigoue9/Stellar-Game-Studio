@@ -107,7 +107,7 @@ mod test {
     #[test]
     fn test_start_and_end_game() {
         let env = Env::default();
-        let contract_id = env.register_contract(None, MockGameHub);
+        let contract_id = env.register(MockGameHub, ());
         let client = MockGameHubClient::new(&env, &contract_id);
         let game_id = Address::generate(&env);
         let player1 = Address::generate(&env);
