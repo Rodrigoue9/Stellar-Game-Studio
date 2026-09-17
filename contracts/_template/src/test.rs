@@ -1,4 +1,5 @@
 #![cfg(test)]
+#![allow(unused_imports)]
 
 //! Los tests que toda partida de dos jugadores necesita.
 //!

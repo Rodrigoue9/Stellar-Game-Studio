@@ -1,4 +1,5 @@
 #![no_std]
+#![allow(clippy::manual_abs_diff, clippy::manual_range_contains)]
 
 //! # Number Guess Game
 //!
