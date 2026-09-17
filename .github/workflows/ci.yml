@@ -49,13 +49,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-cargo-
 
-      - name: Format Rust code
-        run: |
-          cargo fmt --all
-          git config user.name "Rodrigoue9"
-          git config user.email "devhq.oficial@gmail.com"
-          git diff --quiet || (git commit -am "style: format contracts with cargo fmt" && git push)
-
       - name: Check code formatting
         run: cargo fmt --all -- --check
 
