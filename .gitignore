@@ -26,6 +26,9 @@ sgs_frontend/*.tsbuildinfo
 frontend-template/dist/
 frontend-template/dist-node/
 frontend-template/*.tsbuildinfo
+template_frontend/dist/
+template_frontend/dist-node/
+template_frontend/*.tsbuildinfo
 *-frontend/dist/
 *-frontend/dist-node/
 *-frontend/*.tsbuildinfo

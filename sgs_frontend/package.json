@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "build:docs": "tsc -b && vite build --outDir ../docs --emptyOutDir --base=/Stellar-Game-Studio/",
+    "build:docs": "tsc -b && vite build --outDir dist --base=/Stellar-Game-Studio/",
     "lint": "eslint .",
     "preview": "vite preview"
   },
