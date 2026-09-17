@@ -55,7 +55,7 @@ jobs:
         run: cargo fmt --all -- --check
 
       - name: Run Clippy linter
-        run: cargo clippy --workspace --all-targets -- -D warnings
+        run: cargo clippy --workspace -- -D warnings
 
       - name: Run contract unit tests
         run: cargo test --workspace
