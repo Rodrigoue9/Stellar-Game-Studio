@@ -36,12 +36,23 @@ try {
 try {
   const result = await $`rustup target list --installed`.text();
   if (!result.includes("wasm32v1-none")) {
-    console.log("📦 Installing wasm32v1-none target...");
-    await $`rustup target add wasm32v1-none`;
+    console.log("📦 Target 'wasm32v1-none' is missing. Attempting installation via rustup...");
+    try {
+      await $`rustup target add wasm32v1-none`;
+      console.log("✅ Target 'wasm32v1-none' installed successfully.\n");
+    } catch (addError) {
+      console.error("\n❌ Error: Failed to install target 'wasm32v1-none'.");
+      console.error("Soroban SDK >= 27 requires the 'wasm32v1-none' target (Rust >= 1.84).");
+      console.error("The legacy target 'wasm32-unknown-unknown' is rejected on Rust 1.82+.");
+      console.error("\nPlease install it manually with:");
+      console.error("  rustup target add wasm32v1-none\n");
+      process.exit(1);
+    }
   }
 } catch (error) {
-  console.error("❌ Error checking Rust targets:", error);
-  process.exit(1);
+  console.warn("⚠️  Warning: Could not check installed Rust targets via 'rustup'.");
+  console.warn("Ensure you have Rust >= 1.84 and the 'wasm32v1-none' target installed:");
+  console.warn("  rustup target add wasm32v1-none\n");
 }
 
 const args = process.argv.slice(2);

@@ -18,6 +18,40 @@ Stellar Game Studio is a toolkit for shipping web3 games quickly and efficiently
 - Testnet setup that generates wallets, deploys contracts, and wires bindings
 - A production build flow that outputs a deployable frontend
 
+## Prerequisites
+
+Before building or running the project, ensure you have the following installed:
+
+- **Rust & Cargo**: `>= 1.84` ([rustup.rs](https://rustup.rs/))
+- **Rust Target**: `wasm32v1-none` (mandatory for `soroban-sdk` >= 27)
+  ```bash
+  rustup target add wasm32v1-none
+  ```
+  > **Note**: `soroban-sdk` >= 27 **rejects** the legacy `wasm32-unknown-unknown` target on Rust 1.82+. You must use `wasm32v1-none` (requires Rust 1.84+).
+- **Bun**: `>= 1.2` ([bun.sh](https://bun.sh/))
+- **Node.js**: `>= 20` (LTS)
+- **Stellar CLI**: `>= 22` ([Stellar Developer Tools](https://developers.stellar.org/docs/tools/developer-tools/cli/install))
+  ```bash
+  # Install via cargo:
+  cargo install --locked stellar-cli
+  ```
+
+## Environment & Testnet Setup
+
+1. Copy `.env.example` to `.env`:
+   ```bash
+   cp .env.example .env
+   ```
+2. **Obtaining a Testnet Account**:
+   - Using Stellar CLI:
+     ```bash
+     stellar keys generate alice --network testnet
+     stellar keys fund alice --network testnet
+     ```
+   - Or via [Stellar Laboratory](https://laboratory.stellar.org/#account-creator?network=test) and [Friendbot](https://friendbot.stellar.org):
+     `https://friendbot.stellar.org?addr=<YOUR_PUBLIC_KEY>`
+3. Alternatively, running `bun run setup` will automatically generate testnet dev wallets and configure your `.env`.
+
 ## Quick Start (Dev)
 
 ```bash
@@ -25,6 +59,9 @@ Stellar Game Studio is a toolkit for shipping web3 games quickly and efficiently
 git clone https://github.com/Bitcoindefi/Stellar-Game-Studio
 cd Stellar-Game-Studio
 bun install
+
+# Ensure wasm target is present
+rustup target add wasm32v1-none
 
 # Build + deploy contracts to testnet, generate bindings, write .env
 bun run setup
@@ -116,15 +153,13 @@ Build docs into `docs/`:
 bun --cwd=sgs_frontend run build:docs
 ```
 
-## Links
-https://developers.stellar.org/
-https://risczero.com/
-https://jamesbachini.com
-https://www.youtube.com/c/JamesBachini
-https://bachini.substack.com
-https://x.com/james_bachini
-https://www.linkedin.com/in/james-bachini/
-https://github.com/jamesbachini
+## Useful Resources
+
+- [Stellar Developer Documentation](https://developers.stellar.org/docs)
+- [Soroban Smart Contract Docs](https://developers.stellar.org/docs/learn/smart-contract-internals)
+- [Stellar CLI Reference](https://developers.stellar.org/docs/tools/developer-tools/cli)
+- [Stellar Laboratory](https://laboratory.stellar.org/)
+- [Stellar Expert Explorer (Testnet)](https://stellar.expert/explorer/testnet)
 
 ## 📄 License
 
