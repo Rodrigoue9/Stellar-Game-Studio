@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - main
+      - 'ci/**'
+      - 'feat/**'
+      - 'fix/**'
   pull_request:
     branches:
       - main
@@ -27,6 +30,9 @@ jobs:
           toolchain: stable
           targets: wasm32v1-none
           components: rustfmt, clippy
+
+      - name: Ensure target wasm32v1-none is installed
+        run: rustup target add wasm32v1-none
 
       - name: Cache Cargo dependencies & target
         uses: actions/cache@v4
