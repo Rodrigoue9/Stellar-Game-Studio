@@ -30,7 +30,7 @@
 //! costo. Lo que hace falta es que el secreto sea realmente aleatorio, no que
 //! haya dos campos.
 
-use soroban_sdk::{Address, Bytes, BytesN, Env, Symbol, contracttype};
+use soroban_sdk::{contracttype, Address, Bytes, BytesN, Env, Symbol};
 
 /// Cuanto tiempo tiene un jugador para revelar, en segundos, si el juego no
 /// elige otro. Cinco minutos alcanza para una firma humana y es corto para que
@@ -94,7 +94,10 @@ pub fn commitment(
     buf.append(&contract.to_string().to_bytes());
     // Un Symbol corto (hasta 9 caracteres) vive dentro del propio Val, asi que
     // su payload lo identifica sin ambiguedad y se serializa como un u64.
-    buf.append(&Bytes::from_array(env, &game.to_val().get_payload().to_be_bytes()));
+    buf.append(&Bytes::from_array(
+        env,
+        &game.to_val().get_payload().to_be_bytes(),
+    ));
     buf.append(&Bytes::from_array(env, &session_id.to_be_bytes()));
     buf.append(&player.to_string().to_bytes());
     buf.append(&Bytes::from_array(env, &stake.to_be_bytes()));
@@ -159,11 +162,7 @@ pub fn roll(env: &Env, seed: &BytesN<32>, index: u32, n: u32) -> u32 {
 
 impl CommitReveal {
     /// Arranca una partida con el compromiso del primer jugador.
-    pub fn start(
-        player1: Address,
-        player2: Address,
-        commitment1: BytesN<32>,
-    ) -> Self {
+    pub fn start(player1: Address, player2: Address, commitment1: BytesN<32>) -> Self {
         Self {
             player1,
             player2,

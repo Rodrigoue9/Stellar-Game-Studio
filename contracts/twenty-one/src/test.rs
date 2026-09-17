@@ -367,7 +367,11 @@ fn test_bust_detection() {
         let game = client.get_game(&session_id);
         if game.winner.is_some() {
             busted = true;
-            assert_eq!(game.winner.unwrap(), player2, "Player 2 should win when player 1 busts");
+            assert_eq!(
+                game.winner.unwrap(),
+                player2,
+                "Player 2 should win when player 1 busts"
+            );
 
             // After a bust, subsequent operations should fail with GameAlreadyEnded
             let result = client.try_hit(&session_id, &player1);
@@ -837,7 +841,13 @@ fn test_deterministic_card_dealing() {
 
     // Start second game with same session_id in new environment (should be identical)
     let (_env2, client2, _hub2, player1_2, player2_2) = setup_test();
-    client2.start_game(&session_id, &player1_2, &player2_2, &100_0000000, &100_0000000);
+    client2.start_game(
+        &session_id,
+        &player1_2,
+        &player2_2,
+        &100_0000000,
+        &100_0000000,
+    );
     let game2 = client2.get_game(&session_id);
 
     // Note: Since we generate new addresses each time, the cards will be different

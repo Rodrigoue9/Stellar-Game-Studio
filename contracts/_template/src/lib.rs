@@ -21,7 +21,7 @@
 //! deberias necesitar tocar para que esto sea otro juego.
 
 use game_hub_core::{
-    commit_reveal::{commitment, seed, roll, CommitReveal, Phase, DEFAULT_REVEAL_WINDOW},
+    commit_reveal::{commitment, roll, seed, CommitReveal, Phase, DEFAULT_REVEAL_WINDOW},
     CommonError, GameHubClient,
 };
 use soroban_sdk::{
@@ -131,11 +131,7 @@ impl __GAME_STRUCT__ {
     }
 
     /// Fase 1b: el segundo jugador acepta y compromete el suyo. Arranca el plazo.
-    pub fn aceptar(
-        env: Env,
-        session_id: u32,
-        compromiso2: BytesN<32>,
-    ) -> Result<(), CommonError> {
+    pub fn aceptar(env: Env, session_id: u32, compromiso2: BytesN<32>) -> Result<(), CommonError> {
         let mut p: Partida = env
             .storage()
             .persistent()
@@ -149,7 +145,9 @@ impl __GAME_STRUCT__ {
         }
 
         p.cr.accept(&env, compromiso2, DEFAULT_REVEAL_WINDOW);
-        env.storage().persistent().set(&Clave::Partida(session_id), &p);
+        env.storage()
+            .persistent()
+            .set(&Clave::Partida(session_id), &p);
         Ok(())
     }
 
@@ -207,7 +205,9 @@ impl __GAME_STRUCT__ {
             p.cr.revealed2 = Some(secreto);
         }
 
-        env.storage().persistent().set(&Clave::Partida(session_id), &p);
+        env.storage()
+            .persistent()
+            .set(&Clave::Partida(session_id), &p);
         Ok(())
     }
 
@@ -239,7 +239,9 @@ impl __GAME_STRUCT__ {
 
         p.terminada = true;
         p.cr.phase = Phase::Settled;
-        env.storage().persistent().set(&Clave::Partida(session_id), &p);
+        env.storage()
+            .persistent()
+            .set(&Clave::Partida(session_id), &p);
 
         let hub: Address = env.storage().instance().get(&Clave::Hub).unwrap();
         GameHubClient::new(&env, &hub).end_game(&session_id, &gana_primero);
@@ -271,12 +273,16 @@ impl __GAME_STRUCT__ {
             return Err(CommonError::DeadlineNotReached);
         }
 
-        let ganador = p.cr.no_show_winner(&env).ok_or(CommonError::BothPlayersNotPlayed)?;
+        let ganador =
+            p.cr.no_show_winner(&env)
+                .ok_or(CommonError::BothPlayersNotPlayed)?;
         let gana_primero = ganador == p.cr.player1;
 
         p.terminada = true;
         p.cr.phase = Phase::Forfeited;
-        env.storage().persistent().set(&Clave::Partida(session_id), &p);
+        env.storage()
+            .persistent()
+            .set(&Clave::Partida(session_id), &p);
 
         let hub: Address = env.storage().instance().get(&Clave::Hub).unwrap();
         GameHubClient::new(&env, &hub).end_game(&session_id, &gana_primero);

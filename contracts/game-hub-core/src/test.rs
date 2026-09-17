@@ -7,8 +7,9 @@
 
 use super::commit_reveal::*;
 use soroban_sdk::{
-    Address, BytesN, Env, symbol_short,
+    symbol_short,
     testutils::{Address as _, Ledger as _},
+    Address, BytesN, Env,
 };
 
 fn secreto(env: &Env, n: u8) -> BytesN<32> {
@@ -39,10 +40,27 @@ fn el_compromiso_no_sirve_en_otro_juego() {
     let jugador = Address::generate(&env);
     let s = secreto(&env, 1);
 
-    let c = commitment(&env, &contrato, &symbol_short!("dice"), 7, &jugador, 100, &s);
+    let c = commitment(
+        &env,
+        &contrato,
+        &symbol_short!("dice"),
+        7,
+        &jugador,
+        100,
+        &s,
+    );
 
     assert!(
-        !verifies(&env, &c, &contrato, &symbol_short!("guess"), 7, &jugador, 100, &s),
+        !verifies(
+            &env,
+            &c,
+            &contrato,
+            &symbol_short!("guess"),
+            7,
+            &jugador,
+            100,
+            &s
+        ),
         "un compromiso de dice-duel no puede validar en number-guess"
     );
 }
@@ -127,7 +145,11 @@ fn la_tirada_queda_en_rango_y_es_determinista() {
     for i in 0..20u32 {
         let v = roll(&env, &s, i, 6);
         assert!(v < 6, "un dado de seis caras no puede sacar {}", v);
-        assert_eq!(v, roll(&env, &s, i, 6), "la misma semilla y el mismo indice dan lo mismo");
+        assert_eq!(
+            v,
+            roll(&env, &s, i, 6),
+            "la misma semilla y el mismo indice dan lo mismo"
+        );
     }
 }
 

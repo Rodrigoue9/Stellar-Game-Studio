@@ -29,7 +29,7 @@
 pub mod commit_reveal;
 mod test;
 
-use soroban_sdk::{Address, Env, contractclient, contracterror};
+use soroban_sdk::{contractclient, contracterror, Address, Env};
 
 // ============================================================================
 // La interfaz del Game Hub

@@ -86,11 +86,7 @@ impl MockGameHub {
     /// # Arguments
     /// * `session_id` - The game session being ended
     /// * `player1_won` - True if player1 won, false if player2 won
-    pub fn end_game(
-        env: Env,
-        session_id: u32,
-        player1_won: bool,
-    ) {
+    pub fn end_game(env: Env, session_id: u32, player1_won: bool) {
         // No auth required for mock
         GameEnded {
             session_id,

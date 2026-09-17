@@ -11,7 +11,8 @@
 //! Game Hub contract. Games cannot be started or completed without points involvement.
 
 use soroban_sdk::{
-    Address, Bytes, BytesN, Env, IntoVal, contract, contractclient, contracterror, contractimpl, contracttype, vec
+    contract, contractclient, contracterror, contractimpl, contracttype, vec, Address, Bytes,
+    BytesN, Env, IntoVal,
 };
 
 // Import GameHub contract interface
@@ -28,11 +29,7 @@ pub trait GameHub {
         player2_points: i128,
     );
 
-    fn end_game(
-        env: Env,
-        session_id: u32,
-        player1_won: bool
-    );
+    fn end_game(env: Env, session_id: u32, player1_won: bool);
 }
 
 // ============================================================================
@@ -129,12 +126,22 @@ impl NumberGuessContract {
     ) -> Result<(), Error> {
         // Prevent self-play: Player 1 and Player 2 must be different
         if player1 == player2 {
-            panic!("Cannot play against yourself: Player 1 and Player 2 must be different addresses");
+            panic!(
+                "Cannot play against yourself: Player 1 and Player 2 must be different addresses"
+            );
         }
 
         // Require authentication from both players (they consent to committing points)
-        player1.require_auth_for_args(vec![&env, session_id.into_val(&env), player1_points.into_val(&env)]);
-        player2.require_auth_for_args(vec![&env, session_id.into_val(&env), player2_points.into_val(&env)]);
+        player1.require_auth_for_args(vec![
+            &env,
+            session_id.into_val(&env),
+            player1_points.into_val(&env),
+        ]);
+        player2.require_auth_for_args(vec![
+            &env,
+            session_id.into_val(&env),
+            player2_points.into_val(&env),
+        ]);
 
         // Get GameHub address
         let game_hub_addr: Address = env

@@ -11,8 +11,8 @@
 //! Game Hub contract. Games cannot be started or completed without points involvement.
 
 use soroban_sdk::{
-    Address, Bytes, BytesN, Env, IntoVal, contract, contractclient, contracterror,
-    contractimpl, contracttype, vec
+    contract, contractclient, contracterror, contractimpl, contracttype, vec, Address, Bytes,
+    BytesN, Env, IntoVal,
 };
 
 // Import GameHub contract interface
@@ -75,8 +75,8 @@ pub struct Game {
     pub player2: Address,
     pub player1_points: i128,
     pub player2_points: i128,
-    pub player1_hand: Bytes,  // Each byte represents a card (1-13)
-    pub player2_hand: Bytes,  // Each byte represents a card (1-13)
+    pub player1_hand: Bytes, // Each byte represents a card (1-13)
+    pub player2_hand: Bytes, // Each byte represents a card (1-13)
     pub player1_stuck: bool,
     pub player2_stuck: bool,
     pub winner: Option<Address>,
@@ -183,8 +183,16 @@ impl TwentyOneContract {
         }
 
         // Require authentication from both players (they consent to committing points)
-        player1.require_auth_for_args(vec![&env, session_id.into_val(&env), player1_points.into_val(&env)]);
-        player2.require_auth_for_args(vec![&env, session_id.into_val(&env), player2_points.into_val(&env)]);
+        player1.require_auth_for_args(vec![
+            &env,
+            session_id.into_val(&env),
+            player1_points.into_val(&env),
+        ]);
+        player2.require_auth_for_args(vec![
+            &env,
+            session_id.into_val(&env),
+            player2_points.into_val(&env),
+        ]);
 
         // Get GameHub address
         let game_hub_addr: Address = env
@@ -479,7 +487,8 @@ impl TwentyOneContract {
                 card_seed_bytes.append(&Bytes::from(base_seed.clone()));
                 card_seed_bytes.append(&Bytes::from_array(&env, &[i, 1])); // [card_index, player]
                 let card_seed = env.crypto().keccak256(&card_seed_bytes);
-                game.player1_hand.push_back(deal_card(&env, card_seed.into()));
+                game.player1_hand
+                    .push_back(deal_card(&env, card_seed.into()));
             }
 
             // Deal 2 cards to player2
@@ -488,7 +497,8 @@ impl TwentyOneContract {
                 card_seed_bytes.append(&Bytes::from(base_seed.clone()));
                 card_seed_bytes.append(&Bytes::from_array(&env, &[i, 2])); // [card_index, player]
                 let card_seed = env.crypto().keccak256(&card_seed_bytes);
-                game.player2_hand.push_back(deal_card(&env, card_seed.into()));
+                game.player2_hand
+                    .push_back(deal_card(&env, card_seed.into()));
             }
 
             // Store updated game and return error to indicate draw
